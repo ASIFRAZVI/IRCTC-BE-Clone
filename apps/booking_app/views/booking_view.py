@@ -6,13 +6,18 @@ from apps.authentication_app.models.user_model import CustomUser
 from apps.booking_app.models.booking_model import Booking
 from apps.booking_app.serializers.booking_serializer import BookingSerializer, BookingGetSerializer
 from rest_framework import permissions
+from apps.authentication_app.jwt_processor import decode_jwt_token
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from dotenv import load_dotenv
 load_dotenv()
 
 # booking view
 class BookingAV(APIView):
+    authentication_classes=[decode_jwt_token]
     permission_classes = [permissions.IsAuthenticated]
-    
+    throttle_classes = [UserRateThrottle]
+    # throttle_scope = 'contacts' if we want scope level
+
     def post(self, request):
         # JWT_SECRET=os.getenv("JWT_SECRET")
         # try:

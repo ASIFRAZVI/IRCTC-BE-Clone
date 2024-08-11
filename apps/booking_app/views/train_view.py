@@ -3,10 +3,12 @@ from rest_framework.views import APIView
 from rest_framework import status, permissions
 from apps.booking_app.serializers.train_serializer import TrainGetSerializer
 from apps.booking_app.models.booking_model import Train, Booking
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 
 
 class TrainAV(APIView):
     permission_classes=[permissions.AllowAny]
+    throttle_classes = [AnonRateThrottle]
     
     def post(self, request):
         data= request.data

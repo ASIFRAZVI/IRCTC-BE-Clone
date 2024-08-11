@@ -109,10 +109,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#swagger setup
-# REST_FRAMEWORK = {
-#     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-# }
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "Anakin Assignment",
     "DESCRIPTION":"##############################"
@@ -121,11 +118,25 @@ SPECTACULAR_SETTINGS = {
 
 # overrided JWT Auth decoder
 REST_FRAMEWORK = {
+    # athentication
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'apps.authentication_app.jwt_processor.decode_jwt_token',
+        # if want default authentication like middleware we comment out thiline
+        # 'apps.authentication_app.jwt_processor.decode_jwt_token',
     ],
+    # permissions
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    # throttling
+    # 'DEFAULT_THROTTLE_CLASSES': [
+    #     'rest_framework.throttling.AnonRateThrottle',
+    #     'rest_framework.throttling.UserRateThrottle'
+    # ],  comment this if dont want global
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '3/day',
+        'user': '1000/day'
+        # 'contacts': '1000/day', scope based trotling
+    },
+    # Swagger
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }

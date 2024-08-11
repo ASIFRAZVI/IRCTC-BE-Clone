@@ -6,7 +6,6 @@ from apps.authentication_app.models.user_model import CustomUser
 from dotenv import load_dotenv
 load_dotenv()
 
-
 # Existing authentication logic...
 
 # JWT_SECRET=os.getenv('JWT_SECRET')

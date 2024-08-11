@@ -1,1 +1,1 @@
-from .user_authentication import Registration, Login, LogoutAV
+from .user_authentication import Registration, Login, RefreshTokenView, LogoutAV

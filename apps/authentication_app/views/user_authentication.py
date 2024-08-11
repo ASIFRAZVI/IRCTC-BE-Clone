@@ -6,6 +6,7 @@ from apps.authentication_app.models.user_model import CustomUser
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework import permissions
 from apps.authentication_app.jwt_processor.jwt_generator import generate_jwt_token, generate_refresh_token
+from apps.authentication_app.jwt_processor.jwt_decoder import decode_jwt_token
 from pathlib import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -73,8 +74,36 @@ class Login(APIView):
             return Response(signin_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         
+
+class RefreshTokenView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        refresh_token = request.COOKIES.get('refresh_token')
+
+        if not refresh_token:
+            return Response({"error": "Refresh token not found"}, status=401)
+
+        try:
+            payload = decode_jwt_token(refresh_token)
+            user_id = payload['user_id']
+            user = CustomUser.objects.get(id=user_id)
+
+            # Check if the user is active
+            if not user.is_active:
+                return Response({"error": "User account is not active"}, status=401)
+
+            # Generate a new access token
+            new_access_token = generate_jwt_token(user.id, JWT_SECRET)
+
+            return Response({"access_token": new_access_token}, status=200)
+
+        except CustomUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)        
+        
 class LogoutAV(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes=[decode_jwt_token]
 
     def post(self, request):
         response = Response({"message": "Logged out successfully."}, status=200)

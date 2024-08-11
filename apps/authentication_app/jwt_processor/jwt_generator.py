@@ -6,10 +6,10 @@ load_dotenv()
 
 JWT_SECRET=os.getenv('JWT_SECRET')
 
-def generate_jwt_token(user_id, JWT_SECRET, expiration_minutes=60):
+def generate_jwt_token(user_id, JWT_SECRET, expiration_minutes=2):
     payload = {
         'user_id': str(user_id),
-        'exp': datetime.utcnow() + timedelta(hours=expiration_minutes)
+        'exp': datetime.utcnow() + timedelta(minutes=expiration_minutes)
     }
     token = jwt.encode(payload, JWT_SECRET, algorithm='HS256')
     return token
